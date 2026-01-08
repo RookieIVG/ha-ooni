@@ -1,2 +1,2 @@
-# ha-ooni
-Home Assistant integration for Ooni Connect™ Digital Temperature Hub
+# Home Assistant integration for Ooni Connect™ Digital Temperature Hub
+
