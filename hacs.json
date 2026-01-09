@@ -1,0 +1,7 @@
+{
+  "name": "Ooni Connect Bluetooth",
+  "render_readme": true,
+  "category": "integration",
+  "iot_class": "local_polling",
+  "homeassistant": "2024.1.0"
+}
