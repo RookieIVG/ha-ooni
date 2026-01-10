@@ -2,7 +2,7 @@
   "domain": "ooni_connect",
   "name": "Ooni Connect Bluetooth",
   "version": "1.0.0",
-  "codeowners": ["@dein_name"],
+  "codeowners": ["@RookieIVG"],
   "config_flow": true,
   "documentation": "https://github.com/erwin-willems/ooni-connect-bluetooth",
   "integration_type": "device",
