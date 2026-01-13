@@ -7,6 +7,6 @@
   "documentation": "https://github.com/erwin-willems/ooni-connect-bluetooth",
   "integration_type": "device",
   "iot_class": "local_polling",
-  "requirements": ["ooni-connect-bluetooth @ git+https://github.com/RookieIVG/ooni-connect-bluetooth.git@main"],
+  "requirements": ["ooni-connect-bluetooth@git+https://github.com/RookieIVG/ooni-connect-bluetooth.git@main"],
   "dependencies": ["bluetooth"]
 }
