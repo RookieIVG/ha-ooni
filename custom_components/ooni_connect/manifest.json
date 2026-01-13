@@ -1,12 +1,13 @@
 {
   "domain": "ooni_connect",
-  "name": "Ooni Connect Bluetooth",
+  "name": "Ooni",
   "codeowners": ["@RookieIVG"],
   "config_flow": true,
   "dependencies": ["bluetooth"],
-  "documentation": "https://github.com/erwin-willems/ooni-connect-bluetooth",
+  "documentation": "https://github.com/RookieIVG/ha-ooni",
   "integration_type": "device",
   "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/RookieIVG/ha-ooni/issues",
   "requirements": ["ooni-connect-bluetooth@git+https://github.com/RookieIVG/ooni-connect-bluetooth.git@main"],
   "version": "1.0.0"
 }
