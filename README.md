@@ -39,4 +39,34 @@ As this is a custom integration, you need to add it as a "Custom Repository":
 4. The device should either be **automatically discovered**, or:
 5. Click **Add Integration** in the bottom right and search for **Ooni Connect**.
 
-## 📊 Available
+## 📊 Available Entities
+
+| Name | Type | Description |
+| :--- | :--- | :--- |
+| **Ambient Temperature A** | Sensor | Temperature inside the oven (Sensor A) |
+| **Ambient Temperature B** | Sensor | Temperature inside the oven (Sensor B) |
+| **Probe 1** | Sensor | Core temperature of Probe 1 |
+| **Probe 2** | Sensor | Core temperature of Probe 2 |
+| **Battery** | Sensor | Charge level in % |
+| **Bluetooth Connection** | Binary Sensor | `On` = Connected, `Off` = Not reachable |
+| **Probe 1/2 Connected** | Binary Sensor | Indicates if the probe is physically plugged in |
+| **Eco Mode** | Binary Sensor | Status of the power-saving mode |
+
+## ❓ Troubleshooting
+
+**Device is not found**
+* The Ooni thermometer often allows only **one** active Bluetooth connection. Ensure your phone (Ooni App) is not currently connected to the device.
+* Briefly press the power button on the device to wake up the display.
+
+**Sensors are "Unavailable"**
+* Check the **"Bluetooth Connection"** sensor. If it is "Off", the device is out of range or turned off.
+* "Probe 1/2" sensors will show "Unavailable" if no physical probe is plugged in (verify with the "Probe Connected" sensor).
+
+**Enable Debug Logging**
+If you encounter issues, add the following to your `configuration.yaml`:
+
+```yaml
+logger:
+  default: info
+  logs:
+    custom_components.ooni_connect: debug
