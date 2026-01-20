@@ -1,6 +1,6 @@
 {
   "domain": "ooni_connect",
-  "name": "Ooni",
+  "name": "Ooni Connect",
   "codeowners": ["@RookieIVG"],
   "config_flow": true,
   "dependencies": ["bluetooth"],
