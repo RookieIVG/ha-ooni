@@ -1,0 +1,36 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "bluetooth_confirm": {
+        "description": "Do you want to set up {name}?"
+      },
+      "user": {
+        "description": "Select the Ooni thermometer you want to add. Make sure it is turned on and not connected to the Ooni app.",
+        "data": {
+          "address": "Device"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Device is already configured",
+      "not_ooni_device": "This does not appear to be an Ooni device.",
+      "no_devices_found": "No Ooni devices found. Make sure the thermometer is turned on and not currently connected to the Ooni app."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "battery": { "name": "Battery" },
+      "ambient_a": { "name": "Ambient temperature A" },
+      "ambient_b": { "name": "Ambient temperature B" },
+      "probe_p1": { "name": "Probe 1" },
+      "probe_p2": { "name": "Probe 2" }
+    },
+    "binary_sensor": {
+      "status_connected": { "name": "Bluetooth connection" },
+      "probe_p1_connected": { "name": "Probe 1 connected" },
+      "probe_p2_connected": { "name": "Probe 2 connected" },
+      "eco_mode": { "name": "Eco mode" }
+    }
+  }
+}
