@@ -1,80 +1,104 @@
+"""Binary sensor platform for the Ooni Connect Bluetooth integration."""
+
+from __future__ import annotations
+
+from typing import Any
+
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH, DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import DOMAIN, MANUFACTURER, MODEL
+from .coordinator import OoniConnectCoordinator
 
-# Hier fügen wir den neuen Sensor "status_connected" hinzu
+# Key of the special sensor that reports the Bluetooth link itself.
+CONNECTION_KEY = "status_connected"
+
 BINARY_SENSORS: tuple[BinarySensorEntityDescription, ...] = (
     BinarySensorEntityDescription(
-        key="status_connected",
-        name="Bluetooth Verbindung",
+        key=CONNECTION_KEY,
+        translation_key="status_connected",
         device_class=BinarySensorDeviceClass.CONNECTIVITY,
     ),
     BinarySensorEntityDescription(
         key="probe_p1_connected",
-        name="Sonde 1 Verbunden",
-        device_class=BinarySensorDeviceClass.CONNECTIVITY,
+        translation_key="probe_p1_connected",
+        device_class=BinarySensorDeviceClass.PLUG,
     ),
     BinarySensorEntityDescription(
         key="probe_p2_connected",
-        name="Sonde 2 Verbunden",
-        device_class=BinarySensorDeviceClass.CONNECTIVITY,
+        translation_key="probe_p2_connected",
+        device_class=BinarySensorDeviceClass.PLUG,
     ),
+    # Eco mode is a plain on/off state; no device_class maps cleanly to it.
     BinarySensorEntityDescription(
         key="eco_mode",
-        name="Eco Modus",
-        device_class=BinarySensorDeviceClass.POWER,
+        translation_key="eco_mode",
     ),
 )
 
-async def async_setup_entry(hass, entry, async_add_entities):
-    """Richtet die binären Sensoren ein."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up the Ooni binary sensors."""
+    coordinator: OoniConnectCoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
         OoniBinarySensor(coordinator, description)
         for description in BINARY_SENSORS
     )
 
-class OoniBinarySensor(CoordinatorEntity, BinarySensorEntity):
-    """Repräsentiert einen binären Sensor (Ja/Nein)."""
 
-    def __init__(self, coordinator, description):
+class OoniBinarySensor(
+    CoordinatorEntity[OoniConnectCoordinator], BinarySensorEntity
+):
+    """Represents an Ooni on/off state."""
+
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        coordinator: OoniConnectCoordinator,
+        description: BinarySensorEntityDescription,
+    ) -> None:
+        """Initialize the binary sensor."""
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{coordinator.address}_{description.key}"
-        self._attr_device_info = {
-            "identifiers": {(DOMAIN, coordinator.address)},
-            "name": coordinator.device_name,
-            "manufacturer": "Ooni",
-        }
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, coordinator.address)},
+            connections={(CONNECTION_BLUETOOTH, coordinator.address)},
+            name=coordinator.device_name,
+            manufacturer=MANUFACTURER,
+            model=MODEL,
+        )
 
     @property
-    def is_on(self) -> bool:
-        """Entscheidet, ob der Sensor 'An' oder 'Aus' ist."""
-        
-        # 1. Spezialfall: Der Verbindungs-Sensor selbst
-        if self.entity_description.key == "status_connected":
-            # Wenn das letzte Update erfolgreich war, sind wir verbunden
-            return self.coordinator.last_update_success
+    def is_on(self) -> bool | None:
+        """Return the current state."""
+        # The connectivity sensor reflects the real BLE link state.
+        if self.entity_description.key == CONNECTION_KEY:
+            return self.coordinator.connected
 
-        # 2. Alle anderen Sensoren (Sonden, Eco Mode)
-        # Wenn wir gar keine Daten haben (z.B. ganz am Anfang oder offline), sind sie aus/falsch
-        if not self.coordinator.data:
-            return None # Oder False, je nach Geschmack
-        
-        # Wert aus dem Daten-Objekt holen
-        return getattr(self.coordinator.data, self.entity_description.key, False)
+        data = self.coordinator.data
+        if data is None:
+            return None
+        return bool(getattr(data, self.entity_description.key, False))
 
     @property
     def available(self) -> bool:
-        """Wann ist der Sensor überhaupt verfügbar?"""
-        # Der Verbindungssensor ist IMMER verfügbar (er zeigt ja an, ob es geht oder nicht)
-        if self.entity_description.key == "status_connected":
+        """Determine availability."""
+        # The connectivity sensor must always be available so it can report
+        # "off" when the device is out of range.
+        if self.entity_description.key == CONNECTION_KEY:
             return True
-        
-        # Alle anderen Sensoren sind nur verfügbar, wenn wir Daten haben
-        return self.coordinator.last_update_success
+        return self.coordinator.connected and self.coordinator.data is not None
