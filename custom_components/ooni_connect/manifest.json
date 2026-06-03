@@ -2,16 +2,26 @@
   "domain": "ooni_connect",
   "name": "Ooni Connect",
   "bluetooth": [
-    { "manufacturer_id": 34714 },
-    { "service_uuid": "0000cee0-0000-1000-8000-00805f9b34fb" },
-    { "local_name": "Ooni_DT_Hub" }
+    {
+      "manufacturer_id": 34714
+    },
+    {
+      "service_uuid": "0000cee0-0000-1000-8000-00805f9b34fb"
+    },
+    {
+      "local_name": "Ooni_DT_Hub"
+    }
   ],
-  "codeowners": ["@RookieIVG"],
+  "codeowners": [
+    "@RookieIVG"
+  ],
   "config_flow": true,
-  "dependencies": ["bluetooth_adapters"],
+  "dependencies": [
+    "bluetooth_adapters"
+  ],
   "documentation": "https://github.com/RookieIVG/ha-ooni",
   "integration_type": "device",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/RookieIVG/ha-ooni/issues",
-  "version": "1.1.0"
+  "version": "1.2.0"
 }

@@ -11,15 +11,17 @@ DOMAIN = "ooni_connect"
 # reconnect attempts when the device is out of range.
 UPDATE_INTERVAL = timedelta(seconds=60)
 
-# Timeout (seconds) for establishing a single BLE connection attempt.
-# Home Assistant recommends at least 10s for BLE connects.
-CONNECT_TIMEOUT = 20
+# Minimum seconds to wait after a failed connection attempt before retrying,
+# so we don't hammer the adapter/proxy every watchdog cycle.
+MIN_RETRY_INTERVAL = 60
 
-# How many background connection attempts to make per watchdog cycle.
-CONNECT_RETRIES = 3
+# Longer backoff when an ESPHome Bluetooth proxy runs out of connection slots;
+# slots stay reserved for ~30-60s after a dropped attempt, so wait much longer.
+OUT_OF_SLOTS_RETRY_INTERVAL = 300
 
-# Seconds to wait between failed connection attempts.
-RETRY_BACKOFF = 2
+# Attempts handed to bleak-retry-connector per connection try. Kept low so a
+# single run doesn't exhaust all of a proxy's connection slots.
+CONNECT_MAX_ATTEMPTS = 3
 
 MANUFACTURER = "Ooni"
 MODEL = "Digital Thermometer"
