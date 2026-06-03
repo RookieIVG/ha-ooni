@@ -61,17 +61,21 @@ class Client:
         device: BLEDevice,
         notify_callback: Callable[[Packet], None] | None = None,
         disconnected_callback: Callable[[], None] | None = None,
+        max_attempts: int = 3,
     ) -> Client:
         def _disconnected_callback(client: BleakClient) -> None:
             _LOGGER.info("Device disconnected %s", client.address)
             if disconnected_callback:
                 disconnected_callback()
 
+        # max_attempts is forwarded to bleak-retry-connector. Keeping it low
+        # avoids exhausting an ESPHome proxy's connection slots in a single run.
         bleak_client = await establish_connection(
             BleakClient,
             device=device,
             name="Ooni Connect Connection",
             disconnected_callback=_disconnected_callback,
+            max_attempts=max_attempts,
         )
         try:
             client = Client(bleak_client, notify_callback)
