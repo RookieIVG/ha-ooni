@@ -14,6 +14,8 @@ A Home Assistant integration for the **Ooni Digital Thermometer** (standard on t
 - **Connection monitor:** A dedicated binary sensor tracks whether the thermometer is currently connected or out of range. When the device disconnects, all measurement entities correctly become *unavailable* instead of showing stale values.
 - **Hardware status:** See whether probes are plugged in and whether Eco mode is active.
 - **Auto-discovery:** Home Assistant detects the device automatically when it is powered on and in range.
+- **Setup connection check:** during setup the integration tests reachability and, if it can't connect, explains why (signal strength, proxy slots, the Ooni app still being connected, …) instead of silently adding a dead device.
+- **Resilient reconnect:** automatic background reconnect with a cooldown, plus a longer back-off when an ESPHome Bluetooth proxy is temporarily out of connection slots.
 - **Localized:** English and German translations included.
 
 ## 📦 Installation
@@ -62,6 +64,7 @@ This is a custom integration, so add it as a **Custom repository**:
 
 - The Ooni thermometer typically allows only **one** active Bluetooth connection. Make sure your phone (the Ooni app) is not currently connected.
 - Briefly press the power button on the device to wake the display.
+- If you use ESPHome Bluetooth proxies and see "out of connection slots" in the log, a proxy is handling too many BLE devices at once. The integration backs off and retries automatically; adding another proxy near the oven helps.
 
 **Sensors are "Unavailable"**
 
